@@ -8,4 +8,9 @@ public interface RankDao {
 
     //获取定投排名信息
     List<Map<String, Object>> getRankInfo();
+
+
+    List<Map<String, Object>> selectFeerate();
+
+
 }

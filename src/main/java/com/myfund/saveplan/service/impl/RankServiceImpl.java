@@ -25,4 +25,16 @@ public class RankServiceImpl implements RankService {
 //        }
         return rankInfo;
     }
+
+    @Override
+    public List getFeerate() {
+        List<Map<String, Object>> feerateList = rankDao.selectFeerate();
+        for (int i = 0; i < feerateList.size(); i++) {
+
+            double fee = Double.parseDouble(feerateList.get(i).get("FEERATE").toString()) * 100;
+        }
+        return feerateList;
+    }
+
+
 }

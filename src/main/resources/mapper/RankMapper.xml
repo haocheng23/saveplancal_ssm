@@ -32,6 +32,18 @@
                  from [PrimaryData_New].[dbo].[PUB_FUND]
                  group by FundCode
              ) p2
-        where p1.FundCode = p2.FundCode and p1.DealDate = p2.maxdate
+        where p1.FundCode = p2.FundCode
+          and p1.DealDate = p2.maxdate
+    </select>
+
+
+    <select id="selectFeerate" resultType="hashmap">
+        select FUNDCODE,FEERATE
+        from (select b.fundcode, max(a.feerate) feerate
+              from CFG_FEEDETAIL a
+                       INNER JOIN CFG_FEEZONE b on a.feeno = b.feeno
+              where a.feeno in (select feeno from CFG_FEEZONE where FEEPOLICY = '3' and businesscode = '22')
+                and a.feepolicy = 1
+              group by b.fundcode) c
     </select>
 </mapper>

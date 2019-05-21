@@ -2,8 +2,8 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:tx="http://www.springframework.org/schema/tx"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
     <!-- 自动扫描 -->
     <context:component-scan base-package="com.myfund.saveplan.*"/>
@@ -15,28 +15,63 @@
     <context:property-placeholder location="classpath:jdbc.properties"/>
 
     <!-- 2.配置c3p0数据源 -->
-    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
-        <property name="driverClass" value="${sqlserver.driverClassName}"/>
-        <property name="jdbcUrl" value="${sqlserver.url}"/>
-        <property name="user" value="${sqlserver.username}"/>
+    <bean id="dataSource1" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="driverClassName" value="${sqlserver.driverClassName}"/>
+        <property name="url" value="${sqlserver.url}"/>
+        <property name="username" value="${sqlserver.username}"/>
         <property name="password" value="${sqlserver.password}"/>
-        <!-- 设置数据库连接池的最大连接数 -->
-        <property name="maxPoolSize" value="50"/>
-        <!-- 设置数据库连接池的最小连接数 -->
-        <property name="minPoolSize" value="5"/>
-        <!-- 设置数据库连接池的初始化连接数 -->
-        <property name="initialPoolSize" value="5"/>
-        <!-- 设置数据库连接池的连接最大空闲时间 -->
-        <property name="maxIdleTime" value="20"/>
-        <!-- c3p0缓存Statement的数量数 -->
-        <property name="maxStatements" value="50"/>
-        <!-- 当连接池里面的连接用完的时候,C3P0一下获取新的连接数 -->
-        <property name="acquireIncrement" value="20"/>
+        <!-- 配置初始化大小、最小、最大 -->
+        <!-- 通常来说，只需要修改initialSize、minIdle、maxActive -->
+        <!-- 初始化时建立物理连接的个数，缺省值为0 -->
+        <property name="initialSize" value="${jdbc.initialSize}" />
+        <!-- 最小连接池数量 -->
+        <property name="minIdle" value="${jdbc.minIdle}" />
+        <!-- 最大连接池数量，缺省值为8 -->
+        <property name="maxActive" value="${jdbc.maxActive}" />
+
+        <!--验证语句-->
+        <!--<property name="validationQuery" value="${jdbc.validationQuery}"/>-->
+
     </bean>
+
+    <!-- 第二个数据源 -->
+    <bean id="dataSource2" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="driverClassName" value="${oracle.driverClassName}"/>
+        <property name="url" value="${oracle.url}"/>
+        <property name="username" value="${oracle.username}"/>
+        <property name="password" value="${oracle.password}"/>
+        <!-- 配置初始化大小、最小、最大 -->
+        <!-- 通常来说，只需要修改initialSize、minIdle、maxActive -->
+        <!-- 初始化时建立物理连接的个数，缺省值为0 -->
+        <property name="initialSize" value="${jdbc.initialSize}" />
+        <!-- 最小连接池数量 -->
+        <property name="minIdle" value="${jdbc.minIdle}" />
+        <!-- 最大连接池数量，缺省值为8 -->
+        <property name="maxActive" value="${jdbc.maxActive}" />
+
+        <!--验证语句-->
+        <!--<property name="validationQuery" value="${jdbc.validationQuery}"/>-->
+    </bean>
+    <!-- 数据源路由配置 -->
+    <bean id="multipleDataSource" class="com.myfund.saveplan.config.ChooseDataSource">
+        <!-- 默认数据源 -->
+        <property name="defaultTargetDataSource" ref="dataSource1"/>
+        <!-- 目标数据源-->
+        <property name="targetDataSources">
+            <map>
+                <entry key="dataSource1" value-ref="dataSource1"/>
+                <entry key="dataSource2" value-ref="dataSource2"/>
+            </map>
+        </property>
+    </bean>
+
+
+
 
     <!-- 3.配置SqlSessionFactory对象 -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="dataSource" ref="dataSource"/>
+        <!--<property name="dataSource" ref="dataSource"/>-->
+        <property name="dataSource" ref="multipleDataSource"/>
         <!-- 配置MyBaties全局配置文件:mybatis-config.xml -->
         <property name="configLocation" value="classpath:mybatis-config.xml"/>
         <!-- 扫描pojo包 使用别名 -->
@@ -56,9 +91,21 @@
 
     <!-- (事务管理)transaction manager, use JtaTransactionManager for global tx -->
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource"/>
+        <!--<property name="dataSource" ref="dataSource"/>-->
+        <property name="dataSource" ref="multipleDataSource"/>
     </bean>
     <!-- 配置基于注解的声明式事务 -->
     <tx:annotation-driven transaction-manager="transactionManager"/>
+
+
+    <!-- 通过AOP来捕获并实现@DataSource注解 -->
+    <bean id="dataSourceAspect" class="com.myfund.saveplan.config.DataSourceAspect"/>
+    <aop:config>
+        <aop:aspect ref="dataSourceAspect">
+            <!-- 拦截所有service方法 -->
+            <aop:pointcut id="dataSourcePointcut" expression="execution(* com.myfund.saveplan.service..*.*(..))"/>
+            <aop:before pointcut-ref="dataSourcePointcut" method="intercept"/>
+        </aop:aspect>
+    </aop:config>
 
 </beans>

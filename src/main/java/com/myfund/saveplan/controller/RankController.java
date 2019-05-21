@@ -22,9 +22,8 @@ public class RankController {
     public List getRank() throws IOException {
         List rankInfo = rankService.getRankInfo();
         System.out.println("执行了。。。。。。。");
-//        HttpServletResponse response = null;
-        //以json格式返回数据给前端
-//        ResultUtils.toJson(response, rankInfo);
+        List feerate = rankService.getFeerate();
+        System.out.println(feerate.toString());
         return rankInfo;
     }
 
