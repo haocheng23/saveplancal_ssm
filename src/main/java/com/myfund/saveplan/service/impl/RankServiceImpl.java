@@ -6,6 +6,7 @@ import com.myfund.saveplan.util.HttpClientUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -16,25 +17,26 @@ public class RankServiceImpl implements RankService {
     private RankDao rankDao;
 
     @Override
-    public List getRankInfo() {
+    public List<Map<String, Object>> getRankInfo() {
         List<Map<String, Object>> rankInfo = rankDao.getRankInfo();
-//        for (int i = 0; i < rankInfo.size(); i++) {
-//            String url = "https://10.20.31.29:9091/appwebnew/ws/webapp-cxf/getFundFeeRate?fundcode=" + rankInfo.get(i).get("FundCode").toString().trim() + "&businesscode=22";
-//            String s = HttpClientUtil.doGet(url);
-//            System.out.println(s);
-//        }
+//        System.out.println(rankInfo);
         return rankInfo;
     }
 
     @Override
-    public List getFeerate() {
+    public List<Map<String, Object>> getFeerate() {
         List<Map<String, Object>> feerateList = rankDao.selectFeerate();
+//        System.out.println(feerateList);
         for (int i = 0; i < feerateList.size(); i++) {
-
             double fee = Double.parseDouble(feerateList.get(i).get("FEERATE").toString()) * 100;
+            Map<String, Object> map = feerateList.get(i);
+            map.put("FEE", fee);
         }
+        System.out.println(feerateList);
         return feerateList;
     }
+
+
 
 
 }

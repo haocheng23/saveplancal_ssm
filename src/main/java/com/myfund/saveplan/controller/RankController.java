@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class RankController {
@@ -20,10 +21,25 @@ public class RankController {
     @RequestMapping("/rank")
     @ResponseBody
     public List getRank() throws IOException {
-        List rankInfo = rankService.getRankInfo();
+        List<Map<String, Object>> rankInfo = rankService.getRankInfo();
         System.out.println("执行了。。。。。。。");
-        List feerate = rankService.getFeerate();
-        System.out.println(feerate.toString());
+        System.out.println(rankInfo);
+        List<Map<String, Object>> feerate = rankService.getFeerate();
+        for (int i = 0; i < rankInfo.size(); i++) {
+            for (int j = 0; j < feerate.size(); j++) {
+                String code1 = rankInfo.get(i).get("FundCode").toString().trim();
+                String code2 = feerate.get(j).get("FUNDCODE").toString().trim();
+                if (code1.equals(code2)){
+                    String fee = feerate.get(j).get("FEE").toString();
+                    rankInfo.get(i).put("fee", feerate.get(j).get("FEE"));
+                    break;
+                }else{
+                    rankInfo.get(i).put("fee", "--");
+                }
+            }
+        }
+        System.out.println("执行完成了。。。。。。。");
+        System.out.println(rankInfo);
         return rankInfo;
     }
 

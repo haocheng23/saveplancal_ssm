@@ -34,16 +34,25 @@
              ) p2
         where p1.FundCode = p2.FundCode
           and p1.DealDate = p2.maxdate
+        order by p1.FundCode
     </select>
 
 
     <select id="selectFeerate" resultType="hashmap">
-        select FUNDCODE,FEERATE
+        select c.FUNDCODE, c.FEERATE
         from (select b.fundcode, max(a.feerate) feerate
               from CFG_FEEDETAIL a
                        INNER JOIN CFG_FEEZONE b on a.feeno = b.feeno
               where a.feeno in (select feeno from CFG_FEEZONE where FEEPOLICY = '3' and businesscode = '22')
                 and a.feepolicy = 1
               group by b.fundcode) c
+        order by c.FUNDCODE
     </select>
+
+
+    <!--<insert id="addFeerate" parameterType="Paper">-->
+        <!--INSERT INTO paper(paper_id, name, number, detail-->
+        <!--)-->
+        <!--VALUES (#{paperId}, #{paperName}, #{paperNum}, #{paperDetail})-->
+    <!--</insert>-->
 </mapper>
