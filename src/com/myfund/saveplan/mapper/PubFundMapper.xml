@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.myfund.saveplan.dao.PubFundMapper">
+  <resultMap id="BaseResultMap" type="com.myfund.saveplan.pojo.PubFund">
+    <id column="FundCode" jdbcType="CHAR" property="fundcode" />
+    <id column="DealDate" jdbcType="TIMESTAMP" property="dealdate" />
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="FundName" jdbcType="VARCHAR" property="fundname" />
+    <result column="UnitEquity" jdbcType="DECIMAL" property="unitequity" />
+    <result column="TotalEquity" jdbcType="DECIMAL" property="totalequity" />
+    <result column="Equity" jdbcType="DECIMAL" property="equity" />
+    <result column="DayYield" jdbcType="DECIMAL" property="dayyield" />
+    <result column="Profit" jdbcType="DECIMAL" property="profit" />
+    <result column="DayBenefit" jdbcType="DECIMAL" property="daybenefit" />
+    <result column="WeekBenefit" jdbcType="DECIMAL" property="weekbenefit" />
+    <result column="AdjustRatio" jdbcType="DECIMAL" property="adjustratio" />
+    <result column="CheckBenefit" jdbcType="DECIMAL" property="checkbenefit" />
+    <result column="FuQuanUnitEquity" jdbcType="DOUBLE" property="fuquanunitequity" />
+    <result column="LatestWeeklyYield" jdbcType="DECIMAL" property="latestweeklyyield" />
+    <result column="DailyProfit" jdbcType="DECIMAL" property="dailyprofit" />
+    <result column="LineChart" jdbcType="DOUBLE" property="linechart" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    FundCode, DealDate, id, FundName, UnitEquity, TotalEquity, Equity, DayYield, Profit, 
+    DayBenefit, WeekBenefit, AdjustRatio, CheckBenefit, FuQuanUnitEquity, LatestWeeklyYield, 
+    DailyProfit, LineChart
+  </sql>
+  <select id="selectByExample" parameterType="com.myfund.saveplan.pojo.PubFundExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from PUB_FUND
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="com.myfund.saveplan.pojo.PubFundKey" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from PUB_FUND
+    where FundCode = #{fundcode,jdbcType=CHAR}
+      and DealDate = #{dealdate,jdbcType=TIMESTAMP}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.myfund.saveplan.pojo.PubFundKey">
+    delete from PUB_FUND
+    where FundCode = #{fundcode,jdbcType=CHAR}
+      and DealDate = #{dealdate,jdbcType=TIMESTAMP}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.myfund.saveplan.pojo.PubFundExample">
+    delete from PUB_FUND
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.myfund.saveplan.pojo.PubFund">
+    insert into PUB_FUND (FundCode, DealDate, id, 
+      FundName, UnitEquity, TotalEquity, 
+      Equity, DayYield, Profit, 
+      DayBenefit, WeekBenefit, AdjustRatio, 
+      CheckBenefit, FuQuanUnitEquity, LatestWeeklyYield, 
+      DailyProfit, LineChart)
+    values (#{fundcode,jdbcType=CHAR}, #{dealdate,jdbcType=TIMESTAMP}, #{id,jdbcType=INTEGER}, 
+      #{fundname,jdbcType=VARCHAR}, #{unitequity,jdbcType=DECIMAL}, #{totalequity,jdbcType=DECIMAL}, 
+      #{equity,jdbcType=DECIMAL}, #{dayyield,jdbcType=DECIMAL}, #{profit,jdbcType=DECIMAL}, 
+      #{daybenefit,jdbcType=DECIMAL}, #{weekbenefit,jdbcType=DECIMAL}, #{adjustratio,jdbcType=DECIMAL}, 
+      #{checkbenefit,jdbcType=DECIMAL}, #{fuquanunitequity,jdbcType=DOUBLE}, #{latestweeklyyield,jdbcType=DECIMAL}, 
+      #{dailyprofit,jdbcType=DECIMAL}, #{linechart,jdbcType=DOUBLE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.myfund.saveplan.pojo.PubFund">
+    insert into PUB_FUND
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="fundcode != null">
+        FundCode,
+      </if>
+      <if test="dealdate != null">
+        DealDate,
+      </if>
+      <if test="id != null">
+        id,
+      </if>
+      <if test="fundname != null">
+        FundName,
+      </if>
+      <if test="unitequity != null">
+        UnitEquity,
+      </if>
+      <if test="totalequity != null">
+        TotalEquity,
+      </if>
+      <if test="equity != null">
+        Equity,
+      </if>
+      <if test="dayyield != null">
+        DayYield,
+      </if>
+      <if test="profit != null">
+        Profit,
+      </if>
+      <if test="daybenefit != null">
+        DayBenefit,
+      </if>
+      <if test="weekbenefit != null">
+        WeekBenefit,
+      </if>
+      <if test="adjustratio != null">
+        AdjustRatio,
+      </if>
+      <if test="checkbenefit != null">
+        CheckBenefit,
+      </if>
+      <if test="fuquanunitequity != null">
+        FuQuanUnitEquity,
+      </if>
+      <if test="latestweeklyyield != null">
+        LatestWeeklyYield,
+      </if>
+      <if test="dailyprofit != null">
+        DailyProfit,
+      </if>
+      <if test="linechart != null">
+        LineChart,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="fundcode != null">
+        #{fundcode,jdbcType=CHAR},
+      </if>
+      <if test="dealdate != null">
+        #{dealdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="fundname != null">
+        #{fundname,jdbcType=VARCHAR},
+      </if>
+      <if test="unitequity != null">
+        #{unitequity,jdbcType=DECIMAL},
+      </if>
+      <if test="totalequity != null">
+        #{totalequity,jdbcType=DECIMAL},
+      </if>
+      <if test="equity != null">
+        #{equity,jdbcType=DECIMAL},
+      </if>
+      <if test="dayyield != null">
+        #{dayyield,jdbcType=DECIMAL},
+      </if>
+      <if test="profit != null">
+        #{profit,jdbcType=DECIMAL},
+      </if>
+      <if test="daybenefit != null">
+        #{daybenefit,jdbcType=DECIMAL},
+      </if>
+      <if test="weekbenefit != null">
+        #{weekbenefit,jdbcType=DECIMAL},
+      </if>
+      <if test="adjustratio != null">
+        #{adjustratio,jdbcType=DECIMAL},
+      </if>
+      <if test="checkbenefit != null">
+        #{checkbenefit,jdbcType=DECIMAL},
+      </if>
+      <if test="fuquanunitequity != null">
+        #{fuquanunitequity,jdbcType=DOUBLE},
+      </if>
+      <if test="latestweeklyyield != null">
+        #{latestweeklyyield,jdbcType=DECIMAL},
+      </if>
+      <if test="dailyprofit != null">
+        #{dailyprofit,jdbcType=DECIMAL},
+      </if>
+      <if test="linechart != null">
+        #{linechart,jdbcType=DOUBLE},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.myfund.saveplan.pojo.PubFundExample" resultType="java.lang.Long">
+    select count(*) from PUB_FUND
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update PUB_FUND
+    <set>
+      <if test="record.fundcode != null">
+        FundCode = #{record.fundcode,jdbcType=CHAR},
+      </if>
+      <if test="record.dealdate != null">
+        DealDate = #{record.dealdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.fundname != null">
+        FundName = #{record.fundname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.unitequity != null">
+        UnitEquity = #{record.unitequity,jdbcType=DECIMAL},
+      </if>
+      <if test="record.totalequity != null">
+        TotalEquity = #{record.totalequity,jdbcType=DECIMAL},
+      </if>
+      <if test="record.equity != null">
+        Equity = #{record.equity,jdbcType=DECIMAL},
+      </if>
+      <if test="record.dayyield != null">
+        DayYield = #{record.dayyield,jdbcType=DECIMAL},
+      </if>
+      <if test="record.profit != null">
+        Profit = #{record.profit,jdbcType=DECIMAL},
+      </if>
+      <if test="record.daybenefit != null">
+        DayBenefit = #{record.daybenefit,jdbcType=DECIMAL},
+      </if>
+      <if test="record.weekbenefit != null">
+        WeekBenefit = #{record.weekbenefit,jdbcType=DECIMAL},
+      </if>
+      <if test="record.adjustratio != null">
+        AdjustRatio = #{record.adjustratio,jdbcType=DECIMAL},
+      </if>
+      <if test="record.checkbenefit != null">
+        CheckBenefit = #{record.checkbenefit,jdbcType=DECIMAL},
+      </if>
+      <if test="record.fuquanunitequity != null">
+        FuQuanUnitEquity = #{record.fuquanunitequity,jdbcType=DOUBLE},
+      </if>
+      <if test="record.latestweeklyyield != null">
+        LatestWeeklyYield = #{record.latestweeklyyield,jdbcType=DECIMAL},
+      </if>
+      <if test="record.dailyprofit != null">
+        DailyProfit = #{record.dailyprofit,jdbcType=DECIMAL},
+      </if>
+      <if test="record.linechart != null">
+        LineChart = #{record.linechart,jdbcType=DOUBLE},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update PUB_FUND
+    set FundCode = #{record.fundcode,jdbcType=CHAR},
+      DealDate = #{record.dealdate,jdbcType=TIMESTAMP},
+      id = #{record.id,jdbcType=INTEGER},
+      FundName = #{record.fundname,jdbcType=VARCHAR},
+      UnitEquity = #{record.unitequity,jdbcType=DECIMAL},
+      TotalEquity = #{record.totalequity,jdbcType=DECIMAL},
+      Equity = #{record.equity,jdbcType=DECIMAL},
+      DayYield = #{record.dayyield,jdbcType=DECIMAL},
+      Profit = #{record.profit,jdbcType=DECIMAL},
+      DayBenefit = #{record.daybenefit,jdbcType=DECIMAL},
+      WeekBenefit = #{record.weekbenefit,jdbcType=DECIMAL},
+      AdjustRatio = #{record.adjustratio,jdbcType=DECIMAL},
+      CheckBenefit = #{record.checkbenefit,jdbcType=DECIMAL},
+      FuQuanUnitEquity = #{record.fuquanunitequity,jdbcType=DOUBLE},
+      LatestWeeklyYield = #{record.latestweeklyyield,jdbcType=DECIMAL},
+      DailyProfit = #{record.dailyprofit,jdbcType=DECIMAL},
+      LineChart = #{record.linechart,jdbcType=DOUBLE}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.myfund.saveplan.pojo.PubFund">
+    update PUB_FUND
+    <set>
+      <if test="id != null">
+        id = #{id,jdbcType=INTEGER},
+      </if>
+      <if test="fundname != null">
+        FundName = #{fundname,jdbcType=VARCHAR},
+      </if>
+      <if test="unitequity != null">
+        UnitEquity = #{unitequity,jdbcType=DECIMAL},
+      </if>
+      <if test="totalequity != null">
+        TotalEquity = #{totalequity,jdbcType=DECIMAL},
+      </if>
+      <if test="equity != null">
+        Equity = #{equity,jdbcType=DECIMAL},
+      </if>
+      <if test="dayyield != null">
+        DayYield = #{dayyield,jdbcType=DECIMAL},
+      </if>
+      <if test="profit != null">
+        Profit = #{profit,jdbcType=DECIMAL},
+      </if>
+      <if test="daybenefit != null">
+        DayBenefit = #{daybenefit,jdbcType=DECIMAL},
+      </if>
+      <if test="weekbenefit != null">
+        WeekBenefit = #{weekbenefit,jdbcType=DECIMAL},
+      </if>
+      <if test="adjustratio != null">
+        AdjustRatio = #{adjustratio,jdbcType=DECIMAL},
+      </if>
+      <if test="checkbenefit != null">
+        CheckBenefit = #{checkbenefit,jdbcType=DECIMAL},
+      </if>
+      <if test="fuquanunitequity != null">
+        FuQuanUnitEquity = #{fuquanunitequity,jdbcType=DOUBLE},
+      </if>
+      <if test="latestweeklyyield != null">
+        LatestWeeklyYield = #{latestweeklyyield,jdbcType=DECIMAL},
+      </if>
+      <if test="dailyprofit != null">
+        DailyProfit = #{dailyprofit,jdbcType=DECIMAL},
+      </if>
+      <if test="linechart != null">
+        LineChart = #{linechart,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where FundCode = #{fundcode,jdbcType=CHAR}
+      and DealDate = #{dealdate,jdbcType=TIMESTAMP}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.myfund.saveplan.pojo.PubFund">
+    update PUB_FUND
+    set id = #{id,jdbcType=INTEGER},
+      FundName = #{fundname,jdbcType=VARCHAR},
+      UnitEquity = #{unitequity,jdbcType=DECIMAL},
+      TotalEquity = #{totalequity,jdbcType=DECIMAL},
+      Equity = #{equity,jdbcType=DECIMAL},
+      DayYield = #{dayyield,jdbcType=DECIMAL},
+      Profit = #{profit,jdbcType=DECIMAL},
+      DayBenefit = #{daybenefit,jdbcType=DECIMAL},
+      WeekBenefit = #{weekbenefit,jdbcType=DECIMAL},
+      AdjustRatio = #{adjustratio,jdbcType=DECIMAL},
+      CheckBenefit = #{checkbenefit,jdbcType=DECIMAL},
+      FuQuanUnitEquity = #{fuquanunitequity,jdbcType=DOUBLE},
+      LatestWeeklyYield = #{latestweeklyyield,jdbcType=DECIMAL},
+      DailyProfit = #{dailyprofit,jdbcType=DECIMAL},
+      LineChart = #{linechart,jdbcType=DOUBLE}
+    where FundCode = #{fundcode,jdbcType=CHAR}
+      and DealDate = #{dealdate,jdbcType=TIMESTAMP}
+  </update>
+</mapper>

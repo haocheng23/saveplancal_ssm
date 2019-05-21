@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- Dao接口路径 -->
+<mapper namespace="com.myfund.saveplan.dao.RankDao">
+
+    <resultMap id="BasePubFund" type="com.myfund.saveplan.pojo.PubFund">
+        <id column="FundCode" jdbcType="CHAR" property="fundcode"/>
+        <id column="DealDate" jdbcType="TIMESTAMP" property="dealdate"/>
+        <!--<result column="id" jdbcType="INTEGER" property="id"/>-->
+        <result column="FundName" jdbcType="VARCHAR" property="fundname"/>
+        <result column="UnitEquity" jdbcType="DECIMAL" property="unitequity"/>
+        <!--<result column="TotalEquity" jdbcType="DECIMAL" property="totalequity"/>-->
+        <!--<result column="Equity" jdbcType="DECIMAL" property="equity"/>-->
+        <!--<result column="DayYield" jdbcType="DECIMAL" property="dayyield"/>-->
+        <!--<result column="Profit" jdbcType="DECIMAL" property="profit"/>-->
+        <!--<result column="DayBenefit" jdbcType="DECIMAL" property="daybenefit"/>-->
+        <!--<result column="WeekBenefit" jdbcType="DECIMAL" property="weekbenefit"/>-->
+        <!--<result column="AdjustRatio" jdbcType="DECIMAL" property="adjustratio"/>-->
+        <!--<result column="CheckBenefit" jdbcType="DECIMAL" property="checkbenefit"/>-->
+        <!--<result column="FuQuanUnitEquity" jdbcType="DOUBLE" property="fuquanunitequity"/>-->
+        <!--<result column="LatestWeeklyYield" jdbcType="DECIMAL" property="latestweeklyyield"/>-->
+        <!--<result column="DailyProfit" jdbcType="DECIMAL" property="dailyprofit"/>-->
+        <!--<result column="LineChart" jdbcType="DOUBLE" property="linechart"/>-->
+    </resultMap>
+
+
+    <select id="getRankInfo" resultType="hashmap">
+        select p1.FundCode, p1.FundName, p2.maxdate, p1.UnitEquity
+        from [PrimaryData_New].[dbo].[PUB_FUND] p1,
+             (
+                 select CONVERT(varchar(100), MAX(DealDate), 23) maxdate, FundCode
+                 from [PrimaryData_New].[dbo].[PUB_FUND]
+                 group by FundCode
+             ) p2
+        where p1.FundCode = p2.FundCode and p1.DealDate = p2.maxdate
+    </select>
+</mapper>
