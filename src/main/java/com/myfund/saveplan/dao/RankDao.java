@@ -13,4 +13,5 @@ public interface RankDao {
     List<Map<String, Object>> selectFeerate();
 
 
+    List<Map<String, Object>> selectLast1YearProfit(String fundcode);
 }

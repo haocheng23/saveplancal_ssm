@@ -20,6 +20,11 @@ public class RankServiceImpl implements RankService {
     public List<Map<String, Object>> getRankInfo() {
         List<Map<String, Object>> rankInfo = rankDao.getRankInfo();
 //        System.out.println(rankInfo);
+        for (int i = 0; i < rankInfo.size(); i++) {
+            Map map = rankInfo.get(i);
+            String fundCode = rankInfo.get(i).get("FundCode").toString().trim();
+            map.put("FundCode", fundCode);
+        }
         return rankInfo;
     }
 
@@ -28,15 +33,20 @@ public class RankServiceImpl implements RankService {
         List<Map<String, Object>> feerateList = rankDao.selectFeerate();
 //        System.out.println(feerateList);
         for (int i = 0; i < feerateList.size(); i++) {
-            double fee = Double.parseDouble(feerateList.get(i).get("FEERATE").toString()) * 100;
+            double feerate = Double.parseDouble(feerateList.get(i).get("FEERATE").toString()) * 100;
             Map<String, Object> map = feerateList.get(i);
-            map.put("FEE", fee);
+            map.put("FEERATE", feerate);
         }
         System.out.println(feerateList);
         return feerateList;
     }
 
+    @Override
+    public List<Map<String, Object>> getYearProfit(String fundcode) {
 
+        List<Map<String, Object>> list = rankDao.selectLast1YearProfit(fundcode);
+        return list;
+    }
 
 
 }

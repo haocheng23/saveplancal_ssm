@@ -10,4 +10,6 @@ public interface RankService {
 
     @DataSource(value = "dataSource2")
     List getFeerate();
+
+    List getYearProfit(String fundcode);
 }

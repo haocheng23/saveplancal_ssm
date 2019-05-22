@@ -34,6 +34,7 @@
              ) p2
         where p1.FundCode = p2.FundCode
           and p1.DealDate = p2.maxdate
+          and p1.FundCode != '000000'
         order by p1.FundCode
     </select>
 
@@ -49,10 +50,19 @@
         order by c.FUNDCODE
     </select>
 
+    <!-- 过去一年的每月收益 -->
+    <select id="selectLast1YearProfit" resultType="hashmap" parameterType="string">
+        select DealDate, FundCode, UnitEquity
+        from [PrimaryData_New].[dbo].[PUB_FUND]
+        where FundCode = #{fundcode}
+          and DealDate >= dateadd(year,-1,CONVERT(varchar(100), getdate(), 23))-1
+        order by DealDate
+    </select>
+
 
     <!--<insert id="addFeerate" parameterType="Paper">-->
-        <!--INSERT INTO paper(paper_id, name, number, detail-->
-        <!--)-->
-        <!--VALUES (#{paperId}, #{paperName}, #{paperNum}, #{paperDetail})-->
+    <!--INSERT INTO paper(paper_id, name, number, detail-->
+    <!--)-->
+    <!--VALUES (#{paperId}, #{paperName}, #{paperNum}, #{paperDetail})-->
     <!--</insert>-->
 </mapper>
