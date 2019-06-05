@@ -12,4 +12,6 @@ public interface RankService {
     List getFeerate();
 
     List getYearProfit(String fundcode);
+
+    List getMonthLast1DayUnitEquity(String fundcode);
 }

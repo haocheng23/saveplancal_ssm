@@ -42,9 +42,14 @@ public class RankServiceImpl implements RankService {
     }
 
     @Override
-    public List<Map<String, Object>> getYearProfit(String fundcode) {
+    public List getYearProfit(String fundcode) {
+        return null;
+    }
 
-        List<Map<String, Object>> list = rankDao.selectLast1YearProfit(fundcode);
+    @Override
+    public List<Map<String, Object>> getMonthLast1DayUnitEquity(String fundcode) {
+
+        List<Map<String, Object>> list = rankDao.selectMonthLast1DayUnitEquity(fundcode);
         return list;
     }
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!-- Dao接口路径 -->
-<mapper namespace="com.myfund.saveplan.dao.RankDao">
+<mapper namespace="com.myfund.saveplan.dao.CalculateDao">
 
     <resultMap id="BasePubFund" type="com.myfund.saveplan.pojo.PubFund">
         <id column="FundCode" jdbcType="CHAR" property="fundcode"/>
@@ -24,54 +24,52 @@
     </resultMap>
 
 
-    <select id="getRankInfo" resultType="hashmap">
-        select p1.FundCode, p1.FundName, p2.maxdate, p1.UnitEquity
-        from [PrimaryData_New].[dbo].[PUB_FUND] p1,
-             (
-                 select CONVERT(varchar(100), MAX(DealDate), 23) maxdate, FundCode
-                 from [PrimaryData_New].[dbo].[PUB_FUND]
-                 group by FundCode
-             ) p2
-        where p1.FundCode = p2.FundCode
-          and p1.DealDate = p2.maxdate
-          and p1.FundCode != '000000'
-        order by p1.FundCode
-    </select>
+    <!--<select id="getRankInfo" resultType="hashmap">-->
+        <!--select p1.FundCode, p1.FundName, p2.maxdate, p1.UnitEquity-->
+        <!--from [PrimaryData_New].[dbo].[PUB_FUND] p1,-->
+             <!--(-->
+                 <!--select CONVERT(varchar(100), MAX(DealDate), 23) maxdate, FundCode-->
+                 <!--from [PrimaryData_New].[dbo].[PUB_FUND]-->
+                 <!--group by FundCode-->
+             <!--) p2-->
+        <!--where p1.FundCode = p2.FundCode-->
+          <!--and p1.DealDate = p2.maxdate-->
+          <!--and p1.FundCode != '000000'-->
+        <!--order by p1.FundCode-->
+    <!--</select>-->
 
-
-    <select id="selectFeerate" resultType="hashmap">
-        select c.FUNDCODE, c.FEERATE
-        from (select b.fundcode, max(a.feerate) feerate
+    <!-- 获取费率 -->
+    <select id="selectFeerate" resultType="hashmap" parameterType="string">
+        select b.fundcode, max(a.feerate) feerate
               from CFG_FEEDETAIL a
                        INNER JOIN CFG_FEEZONE b on a.feeno = b.feeno
               where a.feeno in (select feeno from CFG_FEEZONE where FEEPOLICY = '3' and businesscode = '22')
                 and a.feepolicy = 1
-              group by b.fundcode) c
-        order by c.FUNDCODE
+                and b.fundcode = #{fundcode}
+                group by b.fundcode
     </select>
 
-    <!-- 每月1号定投的收益计算 -->
-    <select id="selectLast1YearProfit" resultType="hashmap" parameterType="string">
-        select DealDate, FundCode, UnitEquity
-        from [PrimaryData_New].[dbo].[PUB_FUND]
+    <!-- 获取选择区间内每月1号定投的净值 -->
+    <select id="selectUnity" resultType="hashmap" parameterType="Cal">
+        select CONVERT(varchar(100), DealDate, 23) as DealDate, FundCode, UnitEquity
+            from [PrimaryData_New].[dbo].[PUB_FUND]
         where FundCode = #{fundcode}
-          and DealDate >= dateadd(year,-1,CONVERT(varchar(100), getdate()-1, 23))
-          and DealDate = DATEADD(Day,-1,CONVERT(char(8),DATEADD(Month,1,DealDate),20)+'01')
-        order by DealDate
-    </select>
-    <select id="selectMonthLast1DayUnitEquity" resultType="hashmap" parameterType="string">
-        select DealDate, FundCode, UnitEquity
-        from [PrimaryData_New].[dbo].[PUB_FUND]
-        where FundCode = #{fundcode}
-          and DealDate >= dateadd(year,-1,CONVERT(varchar(100), getdate()-1, 23))
-          and DealDate = DATEADD(Day,-1,CONVERT(char(8),DATEADD(Month,1,DealDate),20)+'01')
+        and DealDate between #{beginDay}  and #{endDay}
+        and DealDate = DATEADD(Day,-1,CONVERT(char(8),DATEADD(Month,1,DealDate),20)+'01')
         order by DealDate
     </select>
 
 
-    <!--<insert id="addFeerate" parameterType="Paper">-->
-    <!--INSERT INTO paper(paper_id, name, number, detail-->
-    <!--)-->
-    <!--VALUES (#{paperId}, #{paperName}, #{paperNum}, #{paperDetail})-->
-    <!--</insert>-->
+    <!-- 获取选择区间内的最新净值 -->
+    <select id="selectLatestUnity" resultType="hashmap" parameterType="Cal">
+        select top 1 CONVERT(varchar(100), DealDate, 23) as DealDate, FundCode, UnitEquity
+            from [PrimaryData_New].[dbo].[PUB_FUND]
+        where FundCode = #{fundcode}
+        and DealDate between #{beginDay}  and #{endDay}
+        order by DealDate desc
+    </select>
+
+
+
+
 </mapper>

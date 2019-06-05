@@ -14,6 +14,10 @@ import java.io.PrintWriter;
  *
  */
 public class ResultUtils {
+    /**
+     * 转JSON
+     *
+     */
     public static void toJson(HttpServletResponse response, Object data)
             throws IOException {
 //        Gson gson = new Gson();

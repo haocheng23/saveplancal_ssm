@@ -23,11 +23,11 @@
         <!-- 配置初始化大小、最小、最大 -->
         <!-- 通常来说，只需要修改initialSize、minIdle、maxActive -->
         <!-- 初始化时建立物理连接的个数，缺省值为0 -->
-        <property name="initialSize" value="${jdbc.initialSize}" />
+        <property name="initialSize" value="${jdbc.initialSize}"/>
         <!-- 最小连接池数量 -->
-        <property name="minIdle" value="${jdbc.minIdle}" />
+        <property name="minIdle" value="${jdbc.minIdle}"/>
         <!-- 最大连接池数量，缺省值为8 -->
-        <property name="maxActive" value="${jdbc.maxActive}" />
+        <property name="maxActive" value="${jdbc.maxActive}"/>
 
         <!--验证语句-->
         <!--<property name="validationQuery" value="${jdbc.validationQuery}"/>-->
@@ -43,11 +43,11 @@
         <!-- 配置初始化大小、最小、最大 -->
         <!-- 通常来说，只需要修改initialSize、minIdle、maxActive -->
         <!-- 初始化时建立物理连接的个数，缺省值为0 -->
-        <property name="initialSize" value="${jdbc.initialSize}" />
+        <property name="initialSize" value="${jdbc.initialSize}"/>
         <!-- 最小连接池数量 -->
-        <property name="minIdle" value="${jdbc.minIdle}" />
+        <property name="minIdle" value="${jdbc.minIdle}"/>
         <!-- 最大连接池数量，缺省值为8 -->
-        <property name="maxActive" value="${jdbc.maxActive}" />
+        <property name="maxActive" value="${jdbc.maxActive}"/>
 
         <!--验证语句-->
         <!--<property name="validationQuery" value="${jdbc.validationQuery}"/>-->
@@ -64,8 +64,6 @@
             </map>
         </property>
     </bean>
-
-
 
 
     <!-- 3.配置SqlSessionFactory对象 -->
@@ -101,9 +99,14 @@
     <!-- 通过AOP来捕获并实现@DataSource注解 -->
     <bean id="dataSourceAspect" class="com.myfund.saveplan.config.DataSourceAspect"/>
     <aop:config>
+        <!-- where：在哪些地方（包.类.方法）做增加 -->
+        <!-- 拦截所有service方法 -->
+        <aop:pointcut id="dataSourcePointcut" expression="execution(* com.myfund.saveplan.service..*.*(..))"/>
+
+        <!-- 封装成下面的一个通知Advice -->
+        <!-- what:做什么增强 -->
         <aop:aspect ref="dataSourceAspect">
-            <!-- 拦截所有service方法 -->
-            <aop:pointcut id="dataSourcePointcut" expression="execution(* com.myfund.saveplan.service..*.*(..))"/>
+            <!-- when:在什么时机（方法前/后/前后） -->
             <aop:before pointcut-ref="dataSourcePointcut" method="intercept"/>
         </aop:aspect>
     </aop:config>
